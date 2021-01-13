@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import OneHotEncoder 
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 from collections import namedtuple 
 
 
@@ -90,110 +90,110 @@ def preprocessor():
 
 	def feature_engineering(df):
 
-	    #Combine the SF for outdoor area
-	    df['Total_OutdoorSF'] = df['3SsnPorch']+df['EnclosedPorch']+df['OpenPorchSF']+df['ScreenPorch']+df['WoodDeckSF']
-	    df.drop("OpenPorchSF", axis = 1, inplace = True)
-	    df.drop("EnclosedPorch", axis = 1, inplace = True)
-	    df.drop("3SsnPorch", axis = 1, inplace = True)
-	    df.drop("ScreenPorch", axis = 1, inplace = True)
-	    df.drop("WoodDeckSF", axis = 1, inplace = True)
+		#Combine the SF for outdoor area
+		df['Total_OutdoorSF'] = df['3SsnPorch']+df['EnclosedPorch']+df['OpenPorchSF']+df['ScreenPorch']+df['WoodDeckSF']
+		df.drop("OpenPorchSF", axis = 1, inplace = True)
+		df.drop("EnclosedPorch", axis = 1, inplace = True)
+		df.drop("3SsnPorch", axis = 1, inplace = True)
+		df.drop("ScreenPorch", axis = 1, inplace = True)
+		df.drop("WoodDeckSF", axis = 1, inplace = True)
 		
-	    #sum all bathrooms into new column 'Baths'
-	    df['Baths'] = df['BsmtHalfBath'] + df['BsmtFullBath'] + df['HalfBath'] + df['FullBath']
-	    df['Baths'].fillna(df.Baths.mode()[0], inplace=True)
-	    df.drop("BsmtHalfBath", axis = 1, inplace = True)
-	    df.drop("BsmtFullBath", axis = 1, inplace = True)
-	    df.drop("HalfBath", axis = 1, inplace = True)
-	    df.drop("FullBath", axis = 1, inplace = True)
+		#sum all bathrooms into new column 'Baths'
+		df['Baths'] = df['BsmtHalfBath'] + df['BsmtFullBath'] + df['HalfBath'] + df['FullBath']
+		df['Baths'].fillna(df.Baths.mode()[0], inplace=True)
+		df.drop("BsmtHalfBath", axis = 1, inplace = True)
+		df.drop("BsmtFullBath", axis = 1, inplace = True)
+		df.drop("HalfBath", axis = 1, inplace = True)
+		df.drop("FullBath", axis = 1, inplace = True)
 		
-	    #Change years to ages (note that 53% of houses have same year for YearBuilt and YearRemodAdd):
-	    #Change YearBuilt to Age (YrSold - YearBuilt)
-	    df['Age'] = df['YrSold'] - df['YearBuilt']
+		#Change years to ages (note that 53% of houses have same year for YearBuilt and YearRemodAdd):
+		#Change YearBuilt to Age (YrSold - YearBuilt)
+		df['Age'] = df['YrSold'] - df['YearBuilt']
 
-	    #Change YearRemodAdd to AgeRemodAdd (YrSold - YearRemodAdd) 
-	    df['AgeRemodAdd'] = df['YrSold'] - df['YearRemodAdd']
-	    df.drop(['YearBuilt'], axis=1, inplace=True)
-	    df.drop(['YearRemodAdd'], axis=1, inplace=True)
+		#Change YearRemodAdd to AgeRemodAdd (YrSold - YearRemodAdd) 
+		df['AgeRemodAdd'] = df['YrSold'] - df['YearRemodAdd']
+		df.drop(['YearBuilt'], axis=1, inplace=True)
+		df.drop(['YearRemodAdd'], axis=1, inplace=True)
 		
-	    #Change GarageYrBlt to AgeGarage (YrSold - GarageYrBlt)
-	    df['AgeGarage'] = df['YrSold'] - df['GarageYrBlt']
-	    df.drop(['GarageYrBlt'], axis=1, inplace=True)
+		#Change GarageYrBlt to AgeGarage (YrSold - GarageYrBlt)
+		df['AgeGarage'] = df['YrSold'] - df['GarageYrBlt']
+		df.drop(['GarageYrBlt'], axis=1, inplace=True)
 		
-	    ###############################################
-	    # Encode ordinals # RK edit 28dec2020: added
-	    vals = {'Ex' : 5 , 'Gd' : 4, 'TA' : 3 , 'Fa' : 2, 'Po' : 1, 'NA' : 0}
-	    df['ExterQual'] = df['ExterQual'].map(vals)
-	    df['ExterCond'] = df['ExterCond'].map(vals)
-	    df['BsmtQual'] = df['BsmtQual'].map(vals)
-	    df['KitchenQual'] = df['KitchenQual'].map(vals)
-	    df['FireplaceQu'] = df['FireplaceQu'].map(vals)
-	    df['GarageQual'] = df['GarageQual'].map(vals) 
+		###############################################
+		# Encode ordinals # RK edit 28dec2020: added
+		vals = {'Ex' : 5 , 'Gd' : 4, 'TA' : 3 , 'Fa' : 2, 'Po' : 1, 'NA' : 0}
+		df['ExterQual'] = df['ExterQual'].map(vals)
+		df['ExterCond'] = df['ExterCond'].map(vals)
+		df['BsmtQual'] = df['BsmtQual'].map(vals)
+		df['KitchenQual'] = df['KitchenQual'].map(vals)
+		df['FireplaceQu'] = df['FireplaceQu'].map(vals)
+		df['GarageQual'] = df['GarageQual'].map(vals) 
 		
-	    vals2 = {'Ex' : 5, 'Gd' : 4 , 'TA' : 3, 'Fa' : 2, 'Po' : 2} # only 3 'Poor', merge
-	    df['HeatingQC'] = df['HeatingQC'].map(vals2)
+		vals2 = {'Ex' : 5, 'Gd' : 4 , 'TA' : 3, 'Fa' : 2, 'Po' : 2} # only 3 'Poor', merge
+		df['HeatingQC'] = df['HeatingQC'].map(vals2)
 		
-	    vals3 = {'SBrkr' : 2, 'FuseA' : 1, 'FuseF': 1, 'Mix': 1, 'FuseP': 1} # merge infrequent levels
-	    df['Electrical'] = df['Electrical'].map(vals3)
+		vals3 = {'SBrkr' : 2, 'FuseA' : 1, 'FuseF': 1, 'Mix': 1, 'FuseP': 1} # merge infrequent levels
+		df['Electrical'] = df['Electrical'].map(vals3)
 		
-	    vals4 = {'Fin' : 3 , 'RFn' : 2, 'Unf' : 1 , 'NA' : 0} 
-	    df['GarageFinish'] = df['GarageFinish'].map(vals4)
+		vals4 = {'Fin' : 3 , 'RFn' : 2, 'Unf' : 1 , 'NA' : 0} 
+		df['GarageFinish'] = df['GarageFinish'].map(vals4)
 		
-	    vals5 = {'Y' : 3 , 'P' : 2, 'N' : 1 }
-	    df['PavedDrive'] = df['PavedDrive'].map(vals5)
+		vals5 = {'Y' : 3 , 'P' : 2, 'N' : 1 }
+		df['PavedDrive'] = df['PavedDrive'].map(vals5)
 		
-	    vals6 = {'Y' : 1, 'N' : 0} # change to binary
-	    df['CentralAir'] = df['CentralAir'].map(vals6)
+		vals6 = {'Y' : 1, 'N' : 0} # change to binary
+		df['CentralAir'] = df['CentralAir'].map(vals6)
 		
-	    vals7 = {'GdPrv' : 1 , 'GdWo' : 1, 'MnPrv' : 1 , 'MnWw' : 1, 'NA' : 0} # change to binary
-	    df['Fence'] = df['Fence'].map(vals7)
-	    ###############################################
+		vals7 = {'GdPrv' : 1 , 'GdWo' : 1, 'MnPrv' : 1 , 'MnWw' : 1, 'NA' : 0} # change to binary
+		df['Fence'] = df['Fence'].map(vals7)
+		###############################################
 		
-	    # MSSubClass is numeric but actually should be nominal 'object' type as needs to be dummified # RK edit 28dec2020: added
-	    df['MSSubClass'] = df['MSSubClass'].astype('object')
+		# MSSubClass is numeric but actually should be nominal 'object' type as needs to be dummified # RK edit 28dec2020: added
+		df['MSSubClass'] = df['MSSubClass'].astype('object')
 		
 		
-	    #Remove
-	    df.drop(['Id'], axis=1, inplace=True) # RK edit 28dec2020: added
-	    df.drop(['Street'], axis=1, inplace=True)
-	    df.drop(['Alley'], axis=1, inplace=True)
-	    df.drop(['Utilities'], axis=1, inplace=True)
-	    df.drop(['Condition2'], axis=1, inplace=True)
-	    df.drop(['BsmtCond'], axis=1, inplace=True)
-	    df.drop(['BsmtExposure'], axis=1, inplace=True)
-	    df.drop(['BsmtFinType1'], axis=1, inplace=True)
-	    df.drop(['BsmtFinSF1'], axis=1, inplace=True)
-	    df.drop(['BsmtFinType2'], axis=1, inplace=True)
-	    df.drop(['BsmtFinSF2'], axis=1, inplace=True)
-	    df.drop(['BsmtUnfSF'], axis=1, inplace=True)
-	    df.drop(['Heating'], axis=1, inplace=True)
-	    df.drop(['1stFlrSF'], axis=1, inplace=True)
-	    df.drop(['2ndFlrSF'], axis=1, inplace=True)
-	    df.drop(['LowQualFinSF'], axis=1, inplace=True)
-	    df.drop(['KitchenAbvGr'], axis=1, inplace=True)
-	    df.drop(['Functional'], axis=1, inplace=True)
-	    df.drop(['Fireplaces'], axis=1, inplace=True)
-	    df.drop(['GarageArea'], axis=1, inplace=True) # RK edit 28dec2020: added
-	    df.drop(['PoolArea'], axis=1, inplace=True) # RK edit 28dec2020: added
-	    df.drop(['MiscVal'], axis=1, inplace=True)
-	    df.drop(['RoofMatl'], axis=1, inplace=True)
-	    df.drop(['Fence'], axis=1, inplace=True)
-	    df.drop(['LandSlope'], axis=1, inplace=True)
-	    df.drop(['MiscFeature'], axis=1, inplace=True)
-	    df.drop(['MoSold'], axis=1, inplace=True) # RK edit 28dec2020: added
-	    df.drop(['YrSold'], axis=1, inplace=True) # RK edit 28dec2020: added    
+		#Remove
+		df.drop(['Id'], axis=1, inplace=True) # RK edit 28dec2020: added
+		df.drop(['Street'], axis=1, inplace=True)
+		df.drop(['Alley'], axis=1, inplace=True)
+		df.drop(['Utilities'], axis=1, inplace=True)
+		df.drop(['Condition2'], axis=1, inplace=True)
+		df.drop(['BsmtCond'], axis=1, inplace=True)
+		df.drop(['BsmtExposure'], axis=1, inplace=True)
+		df.drop(['BsmtFinType1'], axis=1, inplace=True)
+		df.drop(['BsmtFinSF1'], axis=1, inplace=True)
+		df.drop(['BsmtFinType2'], axis=1, inplace=True)
+		df.drop(['BsmtFinSF2'], axis=1, inplace=True)
+		df.drop(['BsmtUnfSF'], axis=1, inplace=True)
+		df.drop(['Heating'], axis=1, inplace=True)
+		df.drop(['1stFlrSF'], axis=1, inplace=True)
+		df.drop(['2ndFlrSF'], axis=1, inplace=True)
+		df.drop(['LowQualFinSF'], axis=1, inplace=True)
+		df.drop(['KitchenAbvGr'], axis=1, inplace=True)
+		df.drop(['Functional'], axis=1, inplace=True)
+		df.drop(['Fireplaces'], axis=1, inplace=True)
+		df.drop(['GarageArea'], axis=1, inplace=True) # RK edit 28dec2020: added
+		df.drop(['PoolArea'], axis=1, inplace=True) # RK edit 28dec2020: added
+		df.drop(['MiscVal'], axis=1, inplace=True)
+		df.drop(['RoofMatl'], axis=1, inplace=True)
+		df.drop(['Fence'], axis=1, inplace=True)
+		df.drop(['LandSlope'], axis=1, inplace=True)
+		df.drop(['MiscFeature'], axis=1, inplace=True)
+		df.drop(['MoSold'], axis=1, inplace=True) # RK edit 28dec2020: added
+		df.drop(['YrSold'], axis=1, inplace=True) # RK edit 28dec2020: added    
 		
 	# Features to potentially drop since correlation < ~0.30 and with > ~0.9 (except for MSSubClass)  
-	    df.drop(['Electrical'], axis=1, inplace=True)
-	    df.drop(['PavedDrive'], axis=1, inplace=True)
-	    df.drop(['BedroomAbvGr'], axis=1, inplace=True)
-	    df.drop(['PoolQC'], axis=1, inplace=True)
-	    df.drop(['ExterCond'], axis=1, inplace=True)
-	    df.drop(['OverallCond'], axis=1, inplace=True)
+		df.drop(['Electrical'], axis=1, inplace=True)
+		df.drop(['PavedDrive'], axis=1, inplace=True)
+		df.drop(['BedroomAbvGr'], axis=1, inplace=True)
+		df.drop(['PoolQC'], axis=1, inplace=True)
+		df.drop(['ExterCond'], axis=1, inplace=True)
+		df.drop(['OverallCond'], axis=1, inplace=True)
 	#     df.drop(['AgeRemodAdd'], axis=1, inplace=True)
 	#     df.drop(['AgeGarage'], axis=1, inplace=True)
 	#     df.drop(['Age'], axis=1, inplace=True)
 		
-	    return df
+		return df
 
 
 	## Apply Feature Engineering Function ##############################################################################
@@ -212,42 +212,71 @@ def preprocessor():
 	print("*"*60)
 
 
-	## Dummify ##############################################################################
-	## Dummify ##############################################################################
-	## Dummify ##############################################################################
+	## Dummify and Label Encoding of Un-dummified data #################################
+	## Dummify and Label Encoding of Un-dummified data #################################
+	## Dummify and Label Encoding of Un-dummified data #################################
 
 	#split categorical and numerical variables to dummify categorical varialbes (concat numerical after dummification)
 	train1 = new_train_df.select_dtypes(["object","category"])
 	train2 = new_train_df.select_dtypes(["float64","int64"])
 
 	#OneHotEncoder function to dummify
-	encoder = OneHotEncoder(categories = "auto",drop = 'first',sparse = False)
+	encoder = OneHotEncoder(categories = "auto",drop = 'first' ,sparse = False)
 	train1_enc = encoder.fit_transform(train1)
 	column = encoder.get_feature_names(train1.columns.tolist())
+
+	#LabelEncoder function to encode undummified version
+	le = LabelEncoder()
+	train1_le = train1.apply(le.fit_transform, axis = 0)
+	column_le = train1.columns.tolist()
 
 	# Combine the object and numeric features back again for train set
 	train_df =  pd.DataFrame(train1_enc, columns= column)
 	train_df.set_index(train2.index, inplace = True)
 	train_complete = pd.concat([train_df, train2], axis = 1)
 
+	# same, but for undummified version of data
+	train_le_df =  pd.DataFrame(train1_le, columns= column_le)
+	train_le_df.set_index(train2.index, inplace = True)
+	train_le_complete = pd.concat([train_le_df, train2], axis = 1)
+
 	#also do this for test set
 	#split categorical and numerical variables to dummify categorical varialbes (concat numerical after dummification)
 	test1 = new_test_df.select_dtypes(["object","category"])
 	test2 = new_test_df.select_dtypes(["float64","int64"]) 
 	#OneHotEncoder function to dummify
+	encoder = OneHotEncoder(categories = "auto",drop = 'first' ,sparse = False)
 	test1_enc = encoder.fit_transform(test1)
 	column = encoder.get_feature_names(test1.columns.tolist())
-	# Combine the object and numeric features back again for train set
+
+	#LabelEncoder function to encode undummified version
+	le = LabelEncoder()
+	test1_le = test1.apply(le.fit_transform, axis = 0)
+	column_le = test1.columns.tolist()
+
+	# Combine the object and numeric features back again for test set
 	test_df =  pd.DataFrame(test1_enc, columns= column)
 	test_df.set_index(test2.index, inplace = True)
 	test_complete = pd.concat([test_df, test2], axis = 1)
 
-	print ("Undummified df objects: train_undum_df, test_undum_df")
-	print ("Dummified df objects: train_dum_df, test_dum_df")
+	# same, but for undummified version of data
+	test_le_df =  pd.DataFrame(test1_le, columns= column_le)
+	test_le_df.set_index(test2.index, inplace = True)
+	test_le_complete = pd.concat([test_le_df, test2], axis = 1)
+
+	# Note that test dataframe has 4 fewer columns than train as the following levels 
+	# were not present in the test and thus no column was added during dummification
+	# add 4 additional orphan columns of zeros to test_complete to make identical to train_complete
+	cols = list(set(train_complete.columns.tolist()) - set(test_complete.columns.tolist()))
+	vals = [0] * 4
+	test_complete = test_complete.reindex(columns = test_complete.columns.tolist() + cols[:-1])   
+	test_complete[cols[:-1]] = vals 
 	
+	print ("Undummified df objects: train_undum_df, test_undum_df")
+	print ("Dummified, label encoded df objects: train_dum_df, test_dum_df")
 
 	## Return all four dataframes in namedtuple ##############################################################################
 	## Return all four dataframes in namedtuple ##############################################################################
 	## Return all four dataframes in namedtuple ##############################################################################
-	return out_df(new_train_df, new_test_df, train_complete, test_complete)
+	return out_df(train_le_complete, test_le_complete, train_complete, test_complete)
 

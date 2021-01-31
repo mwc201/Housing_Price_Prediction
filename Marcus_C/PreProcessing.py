@@ -24,8 +24,8 @@ def preprocessor():
     	df.drop("WoodDeckSF", axis = 1, inplace = True)
     
     	#sum all bathrooms into new column 'Baths'
-    	df['Baths'] = df['BsmtHalfBath'] + df['BsmtFullBath'] + df['HalfBath'] + df['FullBath']
-    	df['Baths'].fillna(df.Baths.mode()[0], inplace=True)
+    	df['Total_Baths'] = df['BsmtHalfBath'] + df['BsmtFullBath'] + df['HalfBath'] + df['FullBath']
+    	df['Total_Baths'].fillna(df.Total_Baths.mode()[0], inplace=True)
     	df.drop("BsmtHalfBath", axis = 1, inplace = True)
     	df.drop("BsmtFullBath", axis = 1, inplace = True)
     	df.drop("HalfBath", axis = 1, inplace = True)
@@ -33,16 +33,16 @@ def preprocessor():
 
     
     	#Change years to ages (note that 53% of houses have same year for YearBuilt and YearRemodAdd):
-    	#Change YearBuilt to Age (YrSold - YearBuilt)
-    	df['Age'] = df['YrSold'] - df['YearBuilt']
+    	#Change House_Age to Age (YrSold - YearBuilt)
+    	df['House_Age'] = df['YrSold'] - df['YearBuilt']
 
-    	#Change YearRemodAdd to AgeRemodAdd (YrSold - YearRemodAdd) 
-    	df['AgeRemodAdd'] = df['YrSold'] - df['YearRemodAdd']
+    	#Change YearRemodAdd to House_Age_Remod(YrSold - YearRemodAdd) 
+    	df['House_Age_Remod'] = df['YrSold'] - df['YearRemodAdd']
     	df.drop(['YearBuilt'], axis=1, inplace=True)
     	df.drop(['YearRemodAdd'], axis=1, inplace=True)
     
-    	#Change GarageYrBlt to AgeGarage (YrSold - GarageYrBlt)
-    	df['AgeGarage'] = df['YrSold'] - df['GarageYrBlt']
+    	#Change GarageYrBlt to Garage_Age (YrSold - GarageYrBlt)
+    	df['Garage_Age'] = df['YrSold'] - df['GarageYrBlt']
     	df.drop(['GarageYrBlt'], axis=1, inplace=True)
     
     	df.drop(['Utilities'], axis=1, inplace=True)
